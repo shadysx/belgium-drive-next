@@ -1,0 +1,22 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Questions {
+  Id           Int      @id(map: "PK_Questions") @default(autoincrement())
+  Title        String
+  Text         String
+  Answers      String[]
+  AnswerIndex  Int
+  Themes       String[]
+  ImageUri     String
+  CreationDate DateTime @db.Timestamptz(6)
+  Explanation  String?
+  IsSerious    Boolean  @default(false)
+  ThumbnailUri String?
+}
