@@ -53,13 +53,13 @@ CREATE TABLE "QuizQuestion" (
 );
 
 -- CreateTable
-CREATE TABLE "quiz-result-elements" (
+CREATE TABLE "QuizResultElement" (
     "id" TEXT NOT NULL,
     "questionId" TEXT NOT NULL,
     "quizResultId" TEXT NOT NULL,
     "userAnswerIndex" INTEGER,
 
-    CONSTRAINT "quiz-result-elements_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "QuizResultElement_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -123,10 +123,10 @@ CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 ALTER TABLE "Account" ADD CONSTRAINT "Account_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "quiz-result-elements" ADD CONSTRAINT "quiz-result-elements_questionId_fkey" FOREIGN KEY ("questionId") REFERENCES "QuizQuestion"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "QuizResultElement" ADD CONSTRAINT "QuizResultElement_questionId_fkey" FOREIGN KEY ("questionId") REFERENCES "QuizQuestion"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "quiz-result-elements" ADD CONSTRAINT "quiz-result-elements_quizResultId_fkey" FOREIGN KEY ("quizResultId") REFERENCES "QuizResult"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "QuizResultElement" ADD CONSTRAINT "QuizResultElement_quizResultId_fkey" FOREIGN KEY ("quizResultId") REFERENCES "QuizResult"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "QuizResult" ADD CONSTRAINT "QuizResult_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

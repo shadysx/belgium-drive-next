@@ -2,6 +2,16 @@ import { withAuth } from "@/lib/api-middleware";
 import { NextRequest, NextResponse } from "next/server";
 // import { QuizResult } from "@/lib/interfaces/quiz-result.interface";
 import { PrismaClient } from "@prisma/client";
+import { QuizResult } from "@/lib/interfaces/quiz-result.interface";
+import { QuizResultElement } from "@/lib/interfaces/quiz-result-element.interface";
+import { Stats } from "@/lib/interfaces/stats.interface";
+
+interface StatsAcc {
+  totalQuestionsAnswered: number;
+  totalCorrectAnswers: number;
+  totalQuizDone: number;
+  successQuizElementRatio: number;
+}
 
 export async function GET(request: NextRequest) {
   return withAuth(request, async (session) => {
@@ -21,9 +31,10 @@ export async function GET(request: NextRequest) {
     });
 
     const rawStats = quizResults.reduce(
-      (acc, quizResult) => {
+      (acc: StatsAcc, quizResult: QuizResult) => {
         const correctAnswers = quizResult.quizResultElements.filter(
-          (element) => element.userAnswerIndex === element.question.answerIndex
+          (element: QuizResultElement) =>
+            element.userAnswerIndex === element.question.answerIndex
         ).length;
 
         return {
@@ -42,14 +53,12 @@ export async function GET(request: NextRequest) {
       }
     );
 
-    const stats = {
+    const stats: Stats = {
       totalQuestionsAnswered: rawStats.totalQuestionsAnswered,
       totalQuizDone: rawStats.totalQuizDone,
       successQuizElementRatio:
         (rawStats.totalCorrectAnswers / rawStats.totalQuestionsAnswered) * 100,
     };
-
-    console.log("stats", stats);
 
     return NextResponse.json(stats);
   });

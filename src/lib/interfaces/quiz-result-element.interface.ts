@@ -1,7 +1,7 @@
-import { Question } from "./question.interface";
+import { QuizQuestion } from "./quiz-question.interface";
 
 export interface QuizResultElement {
   id: string;
-  question: Question;
+  question: QuizQuestion;
   userAnswerIndex: number | null;
 }

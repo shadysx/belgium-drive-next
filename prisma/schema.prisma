@@ -22,7 +22,7 @@ model Questions {
 }
 
 model Account {
-  id                    String    @id
+  id                    String    @id @default(cuid())
   accountId             String
   providerId            String
   userId                String
@@ -33,13 +33,13 @@ model Account {
   refreshTokenExpiresAt DateTime?
   scope                 String?
   password              String?
-  createdAt             DateTime
-  updatedAt             DateTime
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
   user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model QuizQuestion {
-  id                   String                 @id
+  id                   String                 @id @default(cuid())
   title                String
   text                 String
   answers              String[]
@@ -50,38 +50,38 @@ model QuizQuestion {
   isSerious            Boolean                @default(false)
   thumbnailUrl         String?
   createdAt            DateTime               @default(now())
-  updatedAt            DateTime
+  updatedAt            DateTime               @updatedAt
   quizResultElements QuizResultElement[]
 }
 
 model QuizResultElement {
-  id              String       @id
+  id              String       @id @default(cuid())
   questionId      String
   quizResultId    String
   userAnswerIndex Int?
   question       QuizQuestion    @relation(fields: [questionId], references: [id])
   quizResult    QuizResult @relation(fields: [quizResultId], references: [id])
-
-  @@map("quiz-result-elements")
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
 }
 
 model QuizResult {
-  id                   String                 @id
+  id                   String                 @id @default(cuid())
   type                 Int
   score                Int
   createdAt            DateTime               @default(now())
-  updatedAt            DateTime
+  updatedAt            DateTime               @updatedAt
   userId               String
   quizResultElements QuizResultElement[]
   user                 User                   @relation(fields: [userId], references: [id])
 }
 
 model Session {
-  id        String   @id
+  id        String   @id @default(cuid())
   expiresAt DateTime
   token     String   @unique
-  createdAt DateTime
-  updatedAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   ipAddress String?
   userAgent String?
   userId    String
@@ -89,23 +89,23 @@ model Session {
 }
 
 model User {
-  id            String         @id
+  id            String         @id @default(cuid())
   name          String
   email         String         @unique
   emailVerified Boolean
   image         String?
-  createdAt     DateTime
-  updatedAt     DateTime
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
   account       Account[]
   quizResults  QuizResult[]
   session       Session[]
 }
 
 model Verification {
-  id         String    @id
+  id         String    @id @default(cuid())
   identifier String
   value      String
   expiresAt  DateTime
-  createdAt  DateTime?
-  updatedAt  DateTime?
+  createdAt  DateTime? @default(now())
+  updatedAt  DateTime? @updatedAt
 }
