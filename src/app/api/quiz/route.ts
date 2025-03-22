@@ -4,11 +4,16 @@ import { NextResponse, NextRequest } from "next/server";
 
 const prisma = new PrismaClient();
 
+// interface QuizRequest {
+//   length: number;
+//   theme?: string;
+// }
+
 export async function GET(request: NextRequest) {
   try {
     return withAuth(request, async () => {
-      const questions = await prisma.questions.findMany();
-      console.log("questions", questions);
+      //   const results: QuizRequest = await request.json();
+      const questions = await prisma.question.findMany();
       return NextResponse.json(questions);
     });
   } catch {
