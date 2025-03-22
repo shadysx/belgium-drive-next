@@ -44,7 +44,6 @@ model QuizQuestion {
   text                 String
   answers              String[]
   answerIndex          Int
-  themes               String[]
   imageUrl             String?
   explanation          String?
   isSerious            Boolean                @default(false)
@@ -52,6 +51,7 @@ model QuizQuestion {
   createdAt            DateTime               @default(now())
   updatedAt            DateTime               @updatedAt
   quizResultElements QuizResultElement[]
+  themes               QuizQuestionTheme[]
 }
 
 model QuizResultElement {
@@ -108,4 +108,20 @@ model Verification {
   expiresAt  DateTime
   createdAt  DateTime? @default(now())
   updatedAt  DateTime? @updatedAt
+}
+
+model Theme {
+  id        String               @id @default(cuid())
+  name      String
+  questions QuizQuestionTheme[]
+}
+
+model QuizQuestionTheme {
+  id            String      @id @default(cuid())
+  question      QuizQuestion @relation(fields: [questionId], references: [id])
+  questionId    String
+  theme         Theme        @relation(fields: [themeId], references: [id])
+  themeId       String
+
+  @@unique([questionId, themeId])
 }
