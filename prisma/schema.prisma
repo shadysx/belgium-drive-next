@@ -44,10 +44,10 @@ model QuizQuestion {
   text                 String
   answers              String[]
   answerIndex          Int
-  imageUrl             String?
-  explanation          String?
+  imageUrl             String
+  explanation          String                 @default("")
   isSerious            Boolean                @default(false)
-  thumbnailUrl         String?
+  thumbnailUrl         String
   createdAt            DateTime               @default(now())
   updatedAt            DateTime               @updatedAt
   quizResultElements QuizResultElement[]

@@ -1,13 +1,9 @@
 import { withAuth } from "@/lib/api-middleware";
+import { QuizRequest } from "@/lib/interfaces/dto/quiz-request.interface";
 import { PrismaClient } from "@prisma/client";
 import { NextResponse, NextRequest } from "next/server";
 
 const prisma = new PrismaClient();
-
-interface QuizRequest {
-  length: number;
-  theme?: string;
-}
 
 export async function POST(request: NextRequest) {
   try {
@@ -26,6 +22,7 @@ export async function POST(request: NextRequest) {
             }
           : undefined,
       });
+
       return NextResponse.json(questions);
     });
   } catch (error) {

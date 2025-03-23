@@ -1,3 +1,5 @@
+import { Theme } from "./theme.interface";
+
 export interface QuizQuestion {
   id: string;
   title: string;
@@ -5,9 +7,9 @@ export interface QuizQuestion {
   imageUrl: string;
   answers: string[];
   answerIndex: number;
-  category: string;
   explanation: string;
-  createdAt: string;
+  createdAt: string | Date;
   isSerious: boolean;
+  themes?: Theme[];
   thumbnailUrl: string;
 }

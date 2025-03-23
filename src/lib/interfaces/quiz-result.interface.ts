@@ -8,4 +8,5 @@ export interface QuizResult {
   score: number;
   quizResultElements: QuizResultElement[];
   createdAt: string;
+  updatedAt: string;
 }
