@@ -10,7 +10,6 @@ export async function POST(request: NextRequest) {
     return withAuth(request, async () => {
       const results: QuizRequest = await request.json();
       const questions = await prisma.quizQuestion.findMany({
-        take: results.length,
         where: results.theme
           ? {
               themes: {
@@ -22,7 +21,12 @@ export async function POST(request: NextRequest) {
           : undefined,
       });
 
-      return NextResponse.json(questions);
+      // Mélanger et sélectionner le nombre demandé de questions
+      const randomQuestions = [...questions]
+        .sort(() => Math.random() - 0.5)
+        .slice(0, results.length);
+
+      return NextResponse.json(randomQuestions);
     });
   } catch {
     return NextResponse.json({ error: "Error fetching data" }, { status: 500 });
