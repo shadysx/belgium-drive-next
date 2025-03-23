@@ -12,7 +12,6 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    console.log(themesWithQuestions);
     return NextResponse.json(themesWithQuestions);
   });
 }

@@ -9,7 +9,6 @@ export async function POST(request: NextRequest) {
   try {
     return withAuth(request, async (session) => {
       const results: QuizSubmission = await request.json();
-      console.log("results len", results.quizSubmissionElements.length);
 
       const questions = await prisma.quizQuestion.findMany({
         where: {
@@ -76,10 +75,17 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
-    return withAuth(request, async () => {
+    return withAuth(request, async (session) => {
       const results = await prisma.quizResult.findMany({
+        where: {
+          userId: session.userId,
+        },
         include: {
-          quizResultElements: true,
+          quizResultElements: {
+            include: {
+              question: true,
+            },
+          },
         },
         orderBy: {
           createdAt: "desc",
@@ -88,8 +94,7 @@ export async function GET(request: NextRequest) {
 
       return NextResponse.json(results);
     });
-  } catch (error) {
-    console.error("Error fetching quiz results:", error);
+  } catch {
     return NextResponse.json(
       { error: "Failed to fetch quiz results" },
       { status: 500 }
