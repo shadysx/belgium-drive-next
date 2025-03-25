@@ -1,0 +1,7 @@
+export enum AchievementType {
+  FIVE_COMPLETED_QUIZZES = "cm8nacqy00000ykjs2zi5u7u3",
+  HUNDRED_QUESTIONS_ANSWERED = "cm8ndkirt0002ykjsi9uj7f39",
+  TWO_HUNDRED_FIFTY_QUESTIONS_ANSWERED = "cm8ne0upa0003ykjsg5s4ce30",
+  FIVE_HUNDRED_QUESTIONS_ANSWERED = "cm8ne46rw0004ykjs45jzvja6",
+  ONE_THOUSAND_QUESTIONS_ANSWERED = "cm8ne4voh0005ykjslc7o7mfy",
+}

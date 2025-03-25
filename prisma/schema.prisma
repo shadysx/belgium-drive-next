@@ -99,6 +99,7 @@ model User {
   account       Account[]
   quizResults  QuizResult[]
   session       Session[]
+  userAchievements UserAchievement[]
 }
 
 model Verification {
@@ -124,4 +125,28 @@ model QuizQuestionTheme {
   themeId       String
 
   @@unique([questionId, themeId])
+}
+
+model Achievement {
+  id          String  @id @default(cuid())
+  title       String
+  description String
+  xp          Int
+  maxProgress Int
+  icon        String
+  userAchievements UserAchievement[]
+}
+
+model UserAchievement {
+  id            String      @id @default(cuid())
+  userId        String
+  achievementId String
+  currentProgress Int       @default(0)
+  completed     Boolean     @default(false)
+  completedAt   DateTime?
+  
+  user         User        @relation(fields: [userId], references: [id])
+  achievement  Achievement @relation(fields: [achievementId], references: [id])
+
+  @@unique([userId, achievementId])
 }

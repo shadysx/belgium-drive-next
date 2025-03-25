@@ -2,6 +2,7 @@ import { NextResponse, NextRequest } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { QuizSubmission } from "@/lib/interfaces/dto/quiz-submission.interface";
 import { withAuth } from "@/lib/api-middleware";
+import { updateAchievementsAfterQuiz } from "@/lib/utils/updateAchievementsAfterQuiz";
 
 const prisma = new PrismaClient();
 
@@ -63,7 +64,19 @@ export async function POST(request: NextRequest) {
         },
       });
 
-      return NextResponse.json(quizResult, { status: 200 });
+      const completedUserAchievements = await updateAchievementsAfterQuiz(
+        session.userId,
+        quizResult,
+        prisma
+      );
+
+      return NextResponse.json(
+        {
+          ...quizResult,
+          completedUserAchievements,
+        },
+        { status: 200 }
+      );
     });
   } catch {
     return NextResponse.json(

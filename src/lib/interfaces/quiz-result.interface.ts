@@ -7,6 +7,6 @@ export interface QuizResult {
   type: QuizType;
   score: number;
   quizResultElements: QuizResultElement[];
-  createdAt: string;
-  updatedAt: string;
+  createdAt: string | Date;
+  updatedAt: string | Date;
 }

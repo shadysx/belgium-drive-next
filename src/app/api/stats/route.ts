@@ -1,8 +1,6 @@
 import { withAuth } from "@/lib/api-middleware";
 import { NextRequest, NextResponse } from "next/server";
-// import { QuizResult } from "@/lib/interfaces/quiz-result.interface";
 import { PrismaClient } from "@prisma/client";
-import { QuizResult } from "@/lib/interfaces/quiz-result.interface";
 import { QuizResultElement } from "@/lib/interfaces/quiz-result-element.interface";
 import { Stats } from "@/lib/interfaces/stats.interface";
 
@@ -31,7 +29,8 @@ export async function GET(request: NextRequest) {
     });
 
     const rawStats = quizResults.reduce(
-      (acc: StatsAcc, quizResult: QuizResult) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (acc: StatsAcc, quizResult: any) => {
         const correctAnswers = quizResult.quizResultElements.filter(
           (element: QuizResultElement) =>
             element.userAnswerIndex === element.question.answerIndex

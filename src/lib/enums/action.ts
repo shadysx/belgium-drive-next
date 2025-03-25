@@ -1,0 +1,4 @@
+export enum Action {
+  QUIZ_COMPLETED,
+  QUIZ_QUESTION_ANSWERED,
+}
