@@ -15,6 +15,11 @@ export async function GET(request: NextRequest) {
         include: {
           achievement: true,
         },
+        orderBy: {
+          achievement: {
+            order: "asc",
+          },
+        },
       });
 
       return NextResponse.json(userAchievements, { status: 200 });
@@ -29,9 +34,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    console.log("before auth in api achivements");
     return withAuth(request, async (session) => {
-      console.log("after auth in api achivements");
       await initializeUserAchievements(session.userId, prisma);
       return NextResponse.json(
         { message: "Achievements initialized" },
