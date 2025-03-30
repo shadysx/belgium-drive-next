@@ -100,6 +100,9 @@ model User {
   quizResults  QuizResult[]
   session       Session[]
   userAchievements UserAchievement[]
+  levelId       String?
+  level         Level?         @relation(fields: [levelId], references: [id]) 
+  currentLvlXP Int? @default(0)
 }
 
 model Verification {
@@ -150,4 +153,13 @@ model UserAchievement {
   achievement  Achievement @relation(fields: [achievementId], references: [id])
 
   @@unique([userId, achievementId])
+}
+
+model Level {
+  id            String    @id @default(cuid())
+  level         Int       @unique
+  xpRequired    Int
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  users         User[]    
 }

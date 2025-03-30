@@ -1,6 +1,5 @@
 import { withAuth } from "@/lib/api-middleware";
 import { QuizRequest } from "@/lib/interfaces/dto/quiz-request.interface";
-import { initializeUserAchievements } from "@/lib/utils/initializeUserAchievements";
 import { PrismaClient } from "@prisma/client";
 import { NextResponse, NextRequest } from "next/server";
 
@@ -8,8 +7,7 @@ const prisma = new PrismaClient();
 
 export async function POST(request: NextRequest) {
   try {
-    return withAuth(request, async (session) => {
-      await initializeUserAchievements(session.userId, prisma);
+    return withAuth(request, async () => {
       const results: QuizRequest = await request.json();
       const questions = await prisma.quizQuestion.findMany({
         where: results.theme

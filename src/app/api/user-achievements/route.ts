@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { withAuth } from "@/lib/api-middleware";
-import { initializeUserAchievements } from "@/lib/utils/initializeUserAchievements";
+import { initializeUserAchievements } from "@/lib/utils/initializeOrUpdateUserAchievements";
 
 const prisma = new PrismaClient();
 

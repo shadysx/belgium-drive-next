@@ -2,7 +2,8 @@ import { NextResponse, NextRequest } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { QuizSubmission } from "@/lib/interfaces/dto/quiz-submission.interface";
 import { withAuth } from "@/lib/api-middleware";
-import { updateAchievementsAfterQuiz } from "@/lib/utils/updateAchievementsAfterQuiz";
+import { updateProgressAndAchievementsAfterQuiz } from "@/lib/utils/updateProgressAndAchievementsAfterQuiz";
+import { QuizType } from "@/lib/enums/quiz-type.enum";
 
 const prisma = new PrismaClient();
 
@@ -31,7 +32,7 @@ export async function POST(request: NextRequest) {
           throw new Error("Question not found");
         }
         const isCorrect = element.userAnswerIndex === question.answerIndex;
-        if (question.isSerious) {
+        if (question.isSerious && results.type === QuizType.SIMULATION) {
           if (isCorrect) score++;
           else score -= 5;
         } else {
@@ -64,11 +65,12 @@ export async function POST(request: NextRequest) {
         },
       });
 
-      const completedUserAchievements = await updateAchievementsAfterQuiz(
-        session.userId,
-        quizResult,
-        prisma
-      );
+      const completedUserAchievements =
+        await updateProgressAndAchievementsAfterQuiz(
+          session.userId,
+          quizResult,
+          prisma
+        );
 
       return NextResponse.json(
         {
