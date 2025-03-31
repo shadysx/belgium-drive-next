@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
       currentLvlXP: user.currentLvlXP ?? 0,
       xpRequiredToLevelUp: nextLevel?.xpRequired ?? 0,
     };
-
+    
     return NextResponse.json(userInfo, { status: 200 });
   });
 }

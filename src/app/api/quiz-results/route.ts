@@ -91,23 +91,38 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     return withAuth(request, async (session) => {
+      const { searchParams } = new URL(request.url);
+      const limit = Number(searchParams.get("limit")) || 10;
+      const cursor = searchParams.get("cursor");
+
+      const paginationOptions = {
+        take: limit + 1,
+        ...(cursor && {
+          skip: 1,
+          cursor: { id: cursor },
+        }),
+      };
+
       const results = await prisma.quizResult.findMany({
-        where: {
-          userId: session.userId,
-        },
+        where: { userId: session.userId },
         include: {
           quizResultElements: {
-            include: {
-              question: true,
-            },
+            include: { question: true },
           },
         },
-        orderBy: {
-          createdAt: "desc",
-        },
+        orderBy: { createdAt: "desc" },
+        ...paginationOptions,
       });
 
-      return NextResponse.json(results);
+      const hasMore = results.length > limit;
+      const nextCursor = hasMore ? results[limit - 1].id : undefined;
+      const paginatedResults = results.slice(0, limit);
+
+      return NextResponse.json({
+        results: paginatedResults,
+        nextCursor,
+        hasMore,
+      });
     });
   } catch {
     return NextResponse.json(
