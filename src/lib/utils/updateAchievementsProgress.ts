@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { AchievementType } from "../enums/achievement-type";
 
-export async function updateAchievements(
+export async function updateAchievementsProgress(
   userId: string,
   correctAnswers: number,
   prisma: PrismaClient

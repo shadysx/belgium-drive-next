@@ -4,6 +4,7 @@ import { QuizSubmission } from "@/lib/interfaces/dto/quiz-submission.interface";
 import { withAuth } from "@/lib/api-middleware";
 import { updateProgressAndAchievementsAfterQuiz } from "@/lib/utils/updateProgressAndAchievementsAfterQuiz";
 import { QuizType } from "@/lib/enums/quiz-type.enum";
+import { ProgressData } from "@/lib/interfaces/dto/progress-data.interface";
 
 const prisma = new PrismaClient();
 
@@ -65,17 +66,19 @@ export async function POST(request: NextRequest) {
         },
       });
 
-      const completedUserAchievements =
+      const progressData: ProgressData =
         await updateProgressAndAchievementsAfterQuiz(
           session.userId,
           quizResult,
           prisma
         );
 
+      console.log("progressData", progressData);
+
       return NextResponse.json(
         {
           ...quizResult,
-          completedUserAchievements,
+          progressData,
         },
         { status: 200 }
       );

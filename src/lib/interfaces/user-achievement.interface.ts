@@ -5,6 +5,6 @@ export interface UserAchievement {
   userId: string;
   currentProgress: number;
   completed: boolean;
-  completedAt: Date;
+  completedAt: Date | null;
   achievement: Achievement;
 }

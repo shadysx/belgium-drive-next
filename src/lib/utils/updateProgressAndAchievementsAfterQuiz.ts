@@ -1,8 +1,9 @@
 import { PrismaClient } from "@prisma/client";
 import { QuizResult } from "@/lib/interfaces/quiz-result.interface";
 import { calculateXPAndLevel } from "./calculateXPAndLevel";
-import { updateAchievements } from "./updateAchievementsProgress";
+import { updateAchievementsProgress } from "./updateAchievementsProgress";
 import { getCompletedAchievements } from "./getCompletedAchievements";
+import { ProgressData } from "../interfaces/dto/progress-data.interface";
 
 export async function updateProgressAndAchievementsAfterQuiz(
   userId: string,
@@ -13,7 +14,7 @@ export async function updateProgressAndAchievementsAfterQuiz(
     (element) => element.question.answerIndex === element.userAnswerIndex
   ).length;
 
-  await updateAchievements(userId, correctAnswers, prisma);
+  await updateAchievementsProgress(userId, correctAnswers, prisma);
 
   const completedUserAchievements = await getCompletedAchievements(
     userId,
@@ -22,28 +23,20 @@ export async function updateProgressAndAchievementsAfterQuiz(
 
   const xpGained = completedUserAchievements?.reduce((acc, userAchievement) => {
     return acc + userAchievement.achievement.xp;
-  }, 0);
-
-  if (xpGained === 0) {
-    return [];
-  }
+  }, 1000);
 
   const transactionOperations = [];
 
-  const { newXP, newLevelId } = await calculateXPAndLevel(
-    prisma,
-    userId,
-    xpGained
-  );
+  const data = await calculateXPAndLevel(prisma, userId, xpGained);
 
   transactionOperations.push(
     prisma.user.update({
       where: { id: userId },
       data: {
-        currentLvlXP: newXP,
+        currentLvlXP: data.newXP,
         level: {
           connect: {
-            id: newLevelId,
+            id: data.newLevelId,
           },
         },
       },
@@ -63,5 +56,14 @@ export async function updateProgressAndAchievementsAfterQuiz(
     await prisma.$transaction(transactionOperations);
   }
 
-  return completedUserAchievements;
+  const progressData: ProgressData = {
+    previousXP: data.previousXP,
+    xpGained: data.xpGained,
+    previousLevel: data.previousLevel,
+    newLevel: data.newLevel,
+    newXP: data.newXP,
+    completedUserAchievements,
+  };
+
+  return progressData;
 }
