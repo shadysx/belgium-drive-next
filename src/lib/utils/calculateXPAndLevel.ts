@@ -27,7 +27,7 @@ export const calculateXPAndLevel = async (
   const currentXP = user.currentLvlXP;
   const currentLevel = user.level;
 
-  let xpToDistribute = xpGained; // 650
+  let xpToDistribute = xpGained;
 
   const levels = await prisma.level.findMany({
     orderBy: {
@@ -49,19 +49,34 @@ export const calculateXPAndLevel = async (
 
   let tempXP = currentXP;
   let tempLevel: Level | null = currentLevel;
+  let isMaxLevel = false;
+  const isLevelUp = xpToDistribute + tempXP >= tempLevel.xpRequired;
 
-  while (tempLevel && xpToDistribute + tempXP >= tempLevel.xpRequired) {
-    xpToDistribute -= tempLevel.xpRequired - tempXP;
-    tempXP = 0;
-    tempLevel = findNextLevel(levels, tempLevel.level);
+  if (isLevelUp) {
+    while (tempLevel && xpToDistribute + tempXP >= tempLevel.xpRequired) {
+      xpToDistribute -= tempLevel.xpRequired - tempXP;
+      tempXP = 0;
+      tempLevel = findNextLevel(levels, tempLevel.level);
+      if (!tempLevel) {
+        isMaxLevel = true;
+      }
+    }
+  } else {
+    xpToDistribute = xpToDistribute + currentXP;
   }
+
+  const maxLevel = await prisma.level.findFirst({
+    orderBy: {
+      level: "desc",
+    },
+  });
 
   return {
     previousXP: currentXP,
     xpGained: xpGained,
     previousLevel: previousLevel,
-    newLevel: tempLevel?.level,
+    newLevel: isMaxLevel ? maxLevel?.level : tempLevel?.level,
     newXP: xpToDistribute,
-    newLevelId: tempLevel?.id,
+    newLevelId: isMaxLevel ? maxLevel?.id : tempLevel?.id,
   };
 };

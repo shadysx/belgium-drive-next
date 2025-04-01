@@ -6,7 +6,6 @@ import { UserInfo } from "@/lib/interfaces/user-info.interface";
 const prisma = new PrismaClient();
 
 export async function GET(request: NextRequest) {
-  console.log("request");
   return withAuth(request, async (session) => {
     const user = await prisma.user.findUnique({
       where: {

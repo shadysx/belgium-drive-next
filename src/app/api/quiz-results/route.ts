@@ -73,8 +73,6 @@ export async function POST(request: NextRequest) {
           prisma
         );
 
-      console.log("progressData", progressData);
-
       return NextResponse.json(
         {
           ...quizResult,

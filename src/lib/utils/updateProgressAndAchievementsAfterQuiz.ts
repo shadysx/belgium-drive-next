@@ -23,7 +23,7 @@ export async function updateProgressAndAchievementsAfterQuiz(
 
   const xpGained = completedUserAchievements?.reduce((acc, userAchievement) => {
     return acc + userAchievement.achievement.xp;
-  }, 800);
+  }, 25);
 
   const transactionOperations = [];
 
