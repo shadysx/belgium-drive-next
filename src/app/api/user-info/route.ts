@@ -21,9 +21,9 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    const nextLevel = await prisma.level.findFirst({
+    const currentLevel = await prisma.level.findFirst({
       where: {
-        level: user.level!.level + 1,
+        level: user.level!.level,
       },
     });
 
@@ -33,9 +33,9 @@ export async function GET(request: NextRequest) {
       email: user.email,
       level: user.level?.level ?? 0,
       currentLvlXP: user.currentLvlXP ?? 0,
-      xpRequiredToLevelUp: nextLevel?.xpRequired ?? 0,
+      xpRequiredToLevelUp: currentLevel?.xpRequired ?? 0,
     };
-    
+
     return NextResponse.json(userInfo, { status: 200 });
   });
 }

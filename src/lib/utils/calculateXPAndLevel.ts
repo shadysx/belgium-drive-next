@@ -26,8 +26,8 @@ export const calculateXPAndLevel = async (
   const previousLevel = user.level.level;
   const currentXP = user.currentLvlXP;
   const currentLevel = user.level;
-  const totalXP = xpGained + currentXP;
-  let xpToDistribute = xpGained;
+
+  let xpToDistribute = xpGained; // 650
 
   const levels = await prisma.level.findMany({
     orderBy: {
@@ -35,7 +35,7 @@ export const calculateXPAndLevel = async (
     },
   });
 
-  let nextLevel = findNextLevel(levels, currentLevel.level);
+  const nextLevel = findNextLevel(levels, currentLevel.level);
 
   if (!nextLevel) {
     return {
@@ -47,34 +47,21 @@ export const calculateXPAndLevel = async (
     };
   }
 
-  const isLevelUp = totalXP >= nextLevel.xpRequired;
+  let tempXP = currentXP;
+  let tempLevel: Level | null = currentLevel;
 
-  console.log("nextLevelXPRequired before loop", nextLevel.xpRequired);
-  console.log("currentLevel before loop", currentLevel);
-  console.log("xpToDistribute before loop", xpToDistribute);
-  console.log("isLevelUp after before loop", isLevelUp);
-
-  while (nextLevel && xpToDistribute + currentXP >= nextLevel.xpRequired) {
-    xpToDistribute -= nextLevel!.xpRequired - currentXP;
-    currentLevel.level++;
-    nextLevel = findNextLevel(levels, currentLevel.level);
+  while (tempLevel && xpToDistribute + tempXP >= tempLevel.xpRequired) {
+    xpToDistribute -= tempLevel.xpRequired - tempXP;
+    tempXP = 0;
+    tempLevel = findNextLevel(levels, tempLevel.level);
   }
-
-  console.log("--------------------------------");
-  console.log("nextLevelXPRequired after loop", nextLevel?.xpRequired);
-  console.log("currentLevel after loop", currentLevel);
-  console.log("xpToDistribute after loop", xpToDistribute);
-
-  const newLevel = levels.find((level) => level.level === currentLevel.level)!;
-
-  console.log("here previousLevel", user.level.level);
 
   return {
     previousXP: currentXP,
     xpGained: xpGained,
     previousLevel: previousLevel,
-    newLevel: newLevel.level,
-    newXP: isLevelUp ? xpToDistribute : totalXP,
-    newLevelId: newLevel.id,
+    newLevel: tempLevel?.level,
+    newXP: xpToDistribute,
+    newLevelId: tempLevel?.id,
   };
 };
