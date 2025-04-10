@@ -1,0 +1,31 @@
+version: "3.4"
+
+services:
+  db:
+    image: postgres
+    container_name: belgium-drive-postgresql
+    environment:
+      POSTGRES_USER: belgium-drive-user
+      POSTGRES_PASSWORD: toor
+      POSTGRES_DB: belgium-drive
+    ports:
+      - "5435:5432"
+    volumes:
+      - belgium-drive-postgres-volume:/var/lib/postgresql/data
+      - ./dumps:/dumps
+
+  next:
+    image: shadysx/belgium-drive-next:0.1.0
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: belgium-drive-next
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://belgium-drive-user:toor@db:5432/belgium-drive
+    depends_on:
+      - db
+
+volumes:
+  belgium-drive-postgres-volume:

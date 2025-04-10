@@ -8,6 +8,7 @@ import { initializeLevel } from "./utils/initializeLevel";
 const prisma = new PrismaClient();
 export const auth = betterAuth({
   plugins: [expo()],
+  debug: true,
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),
